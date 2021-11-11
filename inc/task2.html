@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/ethers.js" type="application/javascript"></script>
+    <title>Task 2 - balance of ERC20 token</title>
+  </head>
+  <body style="text-align: center;">
+    <div>
+        <h1>Get the balance of ERC20 token from exercise 4</h1>
+        <button onclick="getBalanceOf()">Load</button>
+        <br>
+        <br>
+        <div>
+            <label for="name">Name of token: </label>
+            <input type="text" name="name" id="name" style="text-align: center; width: 25%" disabled>
+        </div>
+        <br>
+        <div>
+            <label for="symbol">Symbol of token: </label>
+            <input type="text" name="symbol" id="symbol" style="text-align: center; width: 25%" disabled>
+        </div>
+        <br>
+        <div>
+            <label for="address">Current address: </label>
+            <input type="text" name="address" id="address" style="text-align: center; width: 25%;" disabled>
+        </div>
+        <br>
+        <div>
+            <label for="balance">Balance: </label>
+            <input type="text" name="balance" id="balance" style="text-align: center; width: 25%;" disabled>
+        </div>
+    </div>
+
+    <script>
+        getAccount();
+        var user;
+
+        async function getBalanceOf(){
+            if(typeof window.ethereum !== 'undefined'){
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+
+                const contractAddress = "0x6b3294E17946cB9c1b3fF6c5Ffa5a1C68BfcCc0A";
+
+                const contractABI = [
+                    "function name() view returns (string)",
+                    "function symbol() view returns (string)",
+                    "function decimals() view returns (uint8)",
+                    "function balanceOf(address) view returns (uint)",
+                    "function transfer(address to, uint amount)",
+                    "event Transfer(address indexed from, address indexed to, uint amount)"
+                ]
+
+                const contract = new ethers.Contract(contractAddress, contractABI, provider);
+
+                const name = await contract.name();
+                const symbol = await contract.symbol();
+                const decimals = await contract.decimals();
+                const balance = await contract.balanceOf(user);
+                const balanceFormatted = ethers.utils.formatUnits(balance, decimals);
+                
+                document.getElementById('name').value = name;
+                document.getElementById('symbol').value = symbol;
+                document.getElementById('address').value = user;
+                document.getElementById('balance').value = balanceFormatted;
+
+            }else{
+                alert("There is a connection problem with MetaMask!");
+            }
+        }
+
+        async function getAccount() {
+            const accounts = await ethereum.request({
+                method: 'eth_requestAccounts'
+            })
+            user = accounts[0]; 
+        }
+    </script>
+  </body>
+</html>

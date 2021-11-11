@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../js/ethers.js" type="application/javascript"></script>
+    <title>Task 1 - block height</title>
+  </head>
+  <body style="text-align: center;">
+    <div>
+        <h1>Get current block height</h1>
+        <button onclick="getBlockHeight()">Load</button>
+        <br>
+        <br>
+        <div>
+            <label for="block_height">Block height: </label>
+            <input type="text" name="block_height" id="block_height" style="text-align: center;" disabled>
+        </div>
+    </div>
+
+    <script>
+        async function getBlockHeight(){
+            if(typeof window.ethereum !== 'undefined'){
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                
+                // get current block height from network
+                const blockHeight = await provider.getBlockNumber();
+            
+                document.getElementById('block_height').value = blockHeight;
+
+            }else{
+                alert("There is a connection problem with MetaMask!");
+            }
+        }
+    </script>
+  </body>
+</html>
